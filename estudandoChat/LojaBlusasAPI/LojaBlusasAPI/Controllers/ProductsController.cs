@@ -1,5 +1,6 @@
 ﻿using LojaBlusasAPI.Data;
 using LojaBlusasAPI.Models;
+using LojaBlusasAPI.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,9 +45,9 @@ namespace LojaBlusasAPI.Controllers
 
         // POST api/<ProductsController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Product product)
+        public async Task<IActionResult> Post([FromBody] CreateProductDto dto)
         {
-            if(product == null)
+            if(dto == null)
             {
                 return BadRequest(new
                 {
@@ -54,7 +55,7 @@ namespace LojaBlusasAPI.Controllers
                 });
             }
 
-            if (string.IsNullOrWhiteSpace(product.Name))
+            if (string.IsNullOrWhiteSpace(dto.Name))
             {
                 return BadRequest(new
                 {
@@ -62,7 +63,7 @@ namespace LojaBlusasAPI.Controllers
                 });
             }
 
-            if(product.Price <= 0)
+            if(dto.Price <= 0)
             {
                 return BadRequest(new
                 {
@@ -70,8 +71,25 @@ namespace LojaBlusasAPI.Controllers
                 });
             }
 
+            var product = new Product
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                Price = dto.Price,
+                ImageUrl = dto.ImageUrl,
+            };
+
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
+
+            var response = new ProductResponseDto
+            {
+                Id = product.Id,
+                Name = dto.Name,
+                Description = dto.Description,
+                Price = dto.Price,
+                ImageUrl = dto.ImageUrl
+            };
 
             return CreatedAtAction(nameof(Get), new { id = product.Id }, new
             {
@@ -82,9 +100,9 @@ namespace LojaBlusasAPI.Controllers
 
         // PUT api/<ProductsController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Product product)
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateProductDto dto)
         {
-            if (product == null)
+            if (dto == null)
             {
                 return BadRequest(new
                 {
@@ -92,15 +110,7 @@ namespace LojaBlusasAPI.Controllers
                 });
             }
 
-            if (id != product.Id)
-            {
-                return BadRequest(new
-                {
-                    message = "O ID da URL é diferente do ID do produto!"
-                });
-            }
-
-            if (string.IsNullOrWhiteSpace(product.Name))
+            if (string.IsNullOrWhiteSpace(dto.Name))
             {
                 return BadRequest(new
                 {
@@ -108,7 +118,7 @@ namespace LojaBlusasAPI.Controllers
                 });
             }
 
-            if (product.Price <= 0)
+            if (dto.Price <= 0)
             {
                 return BadRequest(new
                 {
@@ -126,11 +136,21 @@ namespace LojaBlusasAPI.Controllers
                 });
             }
 
-            existingProduct.Name = product.Name;
-            existingProduct.Description = product.Description;
-            existingProduct.Price = product.Price;
+            existingProduct.Name = dto.Name;
+            existingProduct.Description = dto.Description;
+            existingProduct.Price = dto.Price;
+            existingProduct.ImageUrl = dto.ImageUrl;
 
             await _context.SaveChangesAsync();
+
+            var response = new ProductResponseDto
+            { 
+                Id = existingProduct.Id,
+                Name = existingProduct.Name,
+                Description = existingProduct.Description,
+                Price = existingProduct.Price,
+                ImageUrl = existingProduct.ImageUrl
+            };
 
             return Ok(new
             {
