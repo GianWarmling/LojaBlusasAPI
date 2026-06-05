@@ -19,7 +19,11 @@ namespace LojaBlusasAPI.Controllers
             _context = context;
         }
 
-        // GET: api/<ProductsController>
+        /// <summary>
+        /// Retorna todos os produtos cadastrados.
+        /// </summary>
+        /// <returns>Lista de Produtos.</returns>
+        /// <response code="200">Produtos encontrados com sucesso.</response>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -27,7 +31,13 @@ namespace LojaBlusasAPI.Controllers
             return Ok(products);
         }
 
-        // GET api/<ProductsController>/5
+        /// <summary>
+        /// Busca um produto pelo ID.
+        /// </summary>
+        /// <param name="id">ID do produto.</param>
+        /// <returns>Dados do produto.</returns>
+        /// <response code="200">Produto encontrado.</response>
+        /// <response code="404">Produto não encontrado.</response>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -43,7 +53,13 @@ namespace LojaBlusasAPI.Controllers
             return Ok(product);
         }
 
-        // POST api/<ProductsController>
+        /// <summary>
+        /// Cria um novo produto.
+        /// </summary>
+        /// <param name="dto">Dados para criação do produto.</param>
+        /// <returns>Produto criado.</returns>
+        /// <response code="201">Produto criado com sucesso.</response>
+        /// <response code="400">Dados inválidos.</response>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateProductDto dto)
         {
@@ -98,7 +114,15 @@ namespace LojaBlusasAPI.Controllers
             });
         }
 
-        // PUT api/<ProductsController>/5
+        /// <summary>
+        /// Atualiza um produto existente.
+        /// </summary>
+        /// <param name="id">ID do produto.</param>
+        /// <param name="dto">Dados atualizados.</param>
+        /// <returns>Produto atualizado.</returns>
+        /// <response code="200">Produto atualizadocom sucesso.</response>
+        /// <response code="400">Dados inválidos.</response>
+        /// <response code="404">Produto não encontrado.</response>
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] UpdateProductDto dto)
         {
@@ -159,7 +183,13 @@ namespace LojaBlusasAPI.Controllers
             });
         }
 
-        // DELETE api/<ProductsController>/5
+        /// <summary>
+        /// Remove um produto pelo ID.
+        /// </summary>
+        /// <param name="id">ID do produto.</param>
+        /// <returns>Produto removido.</returns>
+        /// <response code="200">Produto removido com sucesso.</response>
+        /// <response code="404">Produto não encontrado.</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
