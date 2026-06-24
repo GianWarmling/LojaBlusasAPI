@@ -24,6 +24,7 @@ namespace LojaBlusasAPI.Controllers
         {
             var orders = await _context.Orders
                 .Include(o => o.Items)
+                .ThenInclude(i => i.Product)
                 .OrderByDescending(o => o.CreateAt)
                 .ToListAsync();
             return Ok(orders);
@@ -35,6 +36,7 @@ namespace LojaBlusasAPI.Controllers
         {
             var order = await _context.Orders
                 .Include(o => o.Items)
+                .ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if(order == null)
