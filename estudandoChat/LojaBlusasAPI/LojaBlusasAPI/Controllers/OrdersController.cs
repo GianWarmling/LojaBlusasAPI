@@ -50,6 +50,23 @@ namespace LojaBlusasAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Order>> Post([FromBody] Order order)
         {
+            foreach (var item in order.Items)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+
+                if(product == null)
+                {
+                    return BadRequest($"Produto {item.ProductId} não encontrado!");
+                }
+                if(product.Stock < item.Quantity)
+                {
+                    return BadRequest($"Estoque insuficiente para {product.Name}! " +$"Disponivel: {product.Stock}");
+                }
+
+                product.Stock -= item.Quantity;
+                item.Product = product;
+            }
+
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
             return Ok(order);

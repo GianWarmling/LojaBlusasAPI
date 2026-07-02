@@ -93,6 +93,8 @@ namespace LojaBlusasAPI.Controllers
                 Description = dto.Description,
                 Price = dto.Price,
                 ImageUrl = dto.ImageUrl,
+                Size = dto.Size,
+                Stock = dto.Stock
             };
 
             await _context.Products.AddAsync(product);
@@ -164,6 +166,8 @@ namespace LojaBlusasAPI.Controllers
             existingProduct.Description = dto.Description;
             existingProduct.Price = dto.Price;
             existingProduct.ImageUrl = dto.ImageUrl;
+            existingProduct.Size = dto.Size;
+            existingProduct.Stock = dto.Stock;
 
             await _context.SaveChangesAsync();
 
