@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LojaBlusasAPI.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace LojaBlusasAPI.Models
 {
@@ -15,6 +16,7 @@ namespace LojaBlusasAPI.Models
         public string Address { get; set; } = string.Empty;
         public decimal Total { get; set; }
         public DateTime CreateAt { get; set; } = DateTime.UtcNow;
+        public OrderStatus Status { get; set; } = OrderStatus.Pendente;
         public List<OrderItem> Items { get; set; } = new();
     }
 }

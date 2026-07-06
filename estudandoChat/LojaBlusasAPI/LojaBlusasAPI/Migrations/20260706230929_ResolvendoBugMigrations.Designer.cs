@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LojaBlusasAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260617235745_addOrders")]
-    partial class addOrders
+    [Migration("20260706230929_ResolvendoBugMigrations")]
+    partial class ResolvendoBugMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,6 +52,9 @@ namespace LojaBlusasAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("Total")
                         .HasColumnType("numeric");
 
@@ -83,6 +86,8 @@ namespace LojaBlusasAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems");
                 });
@@ -130,7 +135,15 @@ namespace LojaBlusasAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("LojaBlusasAPI.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("LojaBlusasAPI.Models.Order", b =>

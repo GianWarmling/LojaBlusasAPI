@@ -49,6 +49,9 @@ namespace LojaBlusasAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("Total")
                         .HasColumnType("numeric");
 

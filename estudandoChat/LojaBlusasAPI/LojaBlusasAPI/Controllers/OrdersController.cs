@@ -1,5 +1,7 @@
 ﻿using LojaBlusasAPI.Data;
 using LojaBlusasAPI.Models;
+using LojaBlusasAPI.Models.DTOs;
+using LojaBlusasAPI.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -70,6 +72,30 @@ namespace LojaBlusasAPI.Controllers
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
             return Ok(order);
+        }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateOrderStatusDto dto)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if(order == null)
+            {
+                return NotFound("Pedido não encontrado!");
+            }
+
+            if(!Enum.IsDefined(typeof(OrderStatus), dto.Status))
+            {
+                return BadRequest("Status inválido.");
+            }
+
+            order.Status = dto.Status;
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Status atualizado com sucesso.",
+                data = order
+            });
         }
     }
 }
