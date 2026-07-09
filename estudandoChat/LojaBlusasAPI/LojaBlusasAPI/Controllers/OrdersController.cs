@@ -50,24 +50,46 @@ namespace LojaBlusasAPI.Controllers
 
         // POST api/<OrdersController>
         [HttpPost]
-        public async Task<ActionResult<Order>> Post([FromBody] Order order)
+        public async Task<ActionResult<Order>> Post([FromBody] CreateOrderDto dto)
         {
-            foreach (var item in order.Items)
+            decimal totalCalculado = 0;
+
+            var order = new Order
             {
-                var product = await _context.Products.FindAsync(item.ProductId);
+                CustomerName = dto.CustomerName,
+                CustomerEmail = dto.CustomerEmail,
+                CustomerPhone = dto.CustomerPhone,
+                Address = dto.Address,
+                Items = new List<OrderItem>()
+            };
+
+            foreach (var itemDto in dto.Items)
+            {
+                var product = await _context.Products.FindAsync(itemDto.ProductId);
 
                 if(product == null)
                 {
-                    return BadRequest($"Produto {item.ProductId} não encontrado!");
+                    return BadRequest($"Produto {itemDto.ProductId} não encontrado!");
                 }
-                if(product.Stock < item.Quantity)
+                if(product.Stock < itemDto.Quantity)
                 {
                     return BadRequest($"Estoque insuficiente para {product.Name}! " +$"Disponivel: {product.Stock}");
                 }
 
-                product.Stock -= item.Quantity;
-                item.Product = product;
+                totalCalculado += product.Price * itemDto.Quantity;
+
+                var orderItem = new OrderItem
+                {
+                    ProductId = itemDto.ProductId,
+                    Quantity = itemDto.Quantity,
+                    UnitPrice = product.Price
+                };
+
+                product.Stock -= itemDto.Quantity;
+                order.Items.Add(orderItem);
             }
+
+            order.Total = totalCalculado;
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
