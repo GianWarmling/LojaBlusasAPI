@@ -3,6 +3,7 @@ using LojaBlusasAPI.Models;
 using LojaBlusasAPI.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -61,6 +62,7 @@ namespace LojaBlusasAPI.Controllers
         /// <response code="201">Produto criado com sucesso.</response>
         /// <response code="400">Dados inválidos.</response>
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Post([FromBody] CreateProductDto dto)
         {
             if(dto == null)
@@ -122,10 +124,11 @@ namespace LojaBlusasAPI.Controllers
         /// <param name="id">ID do produto.</param>
         /// <param name="dto">Dados atualizados.</param>
         /// <returns>Produto atualizado.</returns>
-        /// <response code="200">Produto atualizadocom sucesso.</response>
+        /// <response code="200">Produto atualizado com sucesso.</response>
         /// <response code="400">Dados inválidos.</response>
         /// <response code="404">Produto não encontrado.</response>
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Put(int id, [FromBody] UpdateProductDto dto)
         {
             if (dto == null)
@@ -195,6 +198,7 @@ namespace LojaBlusasAPI.Controllers
         /// <response code="200">Produto removido com sucesso.</response>
         /// <response code="404">Produto não encontrado.</response>
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _context.Products.FindAsync(id);

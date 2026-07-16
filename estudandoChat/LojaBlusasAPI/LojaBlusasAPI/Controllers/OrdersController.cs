@@ -4,6 +4,7 @@ using LojaBlusasAPI.Models.DTOs;
 using LojaBlusasAPI.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,8 +21,14 @@ namespace LojaBlusasAPI.Controllers
             _context = context;
         }
 
-        // GET: api/<OrdersController>
+        /// <summary>
+        /// Lista todos os pedidos cadastrados.
+        /// </summary>
+        /// <returns>Lista de pedidos, com itens e produtos incluídos.</returns>
+        /// <response code="200">Retorna a lista de pedidos.</response>
+        /// <response code="401">Requisição sem token ou token inválido.</response>
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Order>>> Get()
         {
             var orders = await _context.Orders
@@ -32,8 +39,16 @@ namespace LojaBlusasAPI.Controllers
             return Ok(orders);
         }
 
-        // GET api/<OrdersController>/5
+        /// <summary>
+        /// Busca um pedido específico pelo ID.
+        /// </summary>
+        /// <param name="id">ID do pedido.</param>
+        /// <returns>Dados completos do pedido, incluindo itens e produtos.</returns>
+        /// <response code="200">Pedido encontrado.</response>
+        /// <response code="401">Requisição sem token ou token inválido.</response>
+        /// <response code="404">Pedido não encontrado.</response>
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Order>> GetById(int id)
         {
             var order = await _context.Orders
@@ -48,7 +63,13 @@ namespace LojaBlusasAPI.Controllers
             return Ok(order);
         }
 
-        // POST api/<OrdersController>
+        /// <summary>
+        /// Cria um novo pedido.
+        /// </summary>
+        /// <param name="dto">Dados do cliente e itens do pedido.</param>
+        /// <returns>Pedido criado, com total calculado pelo servidor.</returns>
+        /// <response code="200">Pedido criado com sucesso.</response>
+        /// <response code="400">Produto não encontrado ou estoque insuficiente.</response>
         [HttpPost]
         public async Task<ActionResult<Order>> Post([FromBody] CreateOrderDto dto)
         {
@@ -96,7 +117,18 @@ namespace LojaBlusasAPI.Controllers
             return Ok(order);
         }
 
-        [HttpPut("{id}/status")]
+        /// <summary>
+        /// Atualiza o status de um pedido (ex: Pendente, Pago, Enviado).
+        /// </summary>
+        /// <param name="id">ID do pedido.</param>
+        /// <param name="dto">Novo status do pedido.</param>
+        /// <returns>Confirmação da atualização.</returns>
+        /// <response code="200">Status atualizado com sucesso.</response>
+        /// <response code="400">Status inválido.</response>
+        /// <response code="401">Requisição sem token ou token inválido.</response>
+        /// <response code="404">Pedido não encontrado.</response>
+        [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Put(int id, [FromBody] UpdateOrderStatusDto dto)
         {
             var order = await _context.Orders.FindAsync(id);
